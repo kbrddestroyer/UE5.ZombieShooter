@@ -23,10 +23,16 @@ class ZOMBIESHOOTER_API ACPlayer : public ACharacter
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	UInputAction* iaLook = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UInputAction* iaMove = nullptr;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	UInputMappingContext* DefaultMappingContext = nullptr;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	float fMouseSens = 1.0;
+
 	UPROPERTY(EditAnywhere, Category = "Debug")
 	float fDebugMessageLifetime = .5f;
 public:
@@ -36,6 +42,9 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	UFUNCTION()
+	void MoveCamera(const FInputActionInstance& Instance);
 
 	UFUNCTION()
 	void MovePlayer(const FInputActionInstance& Instance);

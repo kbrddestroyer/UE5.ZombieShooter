@@ -37,12 +37,27 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	UEnhancedInputComponent* Input = Cast<UEnhancedInputComponent>(PlayerInputComponent);
-	Input->BindAction(iaLook, ETriggerEvent::Triggered, this, &ACPlayer::MovePlayer);
+	Input->BindAction(iaLook, ETriggerEvent::Triggered, this, &ACPlayer::MoveCamera);
+	Input->BindAction(iaMove, ETriggerEvent::Triggered, this, &ACPlayer::MovePlayer);
 }
 
-void ACPlayer::MovePlayer(const FInputActionInstance& Instance)
+void ACPlayer::MoveCamera(const FInputActionInstance& Instance)
 {
 	FVector2D inputData = Instance.GetValue().Get<FVector2D>() * fMouseSens;
 	AddControllerYawInput(inputData.X);
 	AddControllerPitchInput(inputData.Y);
+}
+
+void ACPlayer::MovePlayer(const FInputActionInstance& Instance)
+{
+	FVector2D inputData = Instance.GetValue().Get<FVector2D>();
+
+	const FRotator rotation = Controller->GetControlRotation();
+	const FRotator yawRotation = FRotator(0, rotation.Yaw, 0);
+
+	const FVector forward = FRotationMatrix(yawRotation).GetUnitAxis(EAxis::X);
+	const FVector right = FRotationMatrix(yawRotation).GetUnitAxis(EAxis::Y);
+
+	AddMovementInput(right, inputData.X);
+	AddMovementInput(forward, inputData.Y);
 }
