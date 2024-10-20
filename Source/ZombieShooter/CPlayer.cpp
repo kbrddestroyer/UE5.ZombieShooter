@@ -1,24 +1,22 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// CPlayer - Player controller with basic input functionality
+// Responsible for moving player
+//
+// Author: KeyboardDestroyer
 
 
 #include "CPlayer.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 
-// Sets default values
 ACPlayer::ACPlayer()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 }
 
-// Called when the game starts or when spawned
 void ACPlayer::BeginPlay()
 {
 	Super::BeginPlay();
-
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "Hello from Player with controller");
 
 	if (APlayerController* PC = Cast<APlayerController>(GetController()))
 	{
@@ -29,22 +27,37 @@ void ACPlayer::BeginPlay()
 	}
 }
 
-// Called every frame
 void ACPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 }
 
-// Called to bind functionality to input
 void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	UEnhancedInputComponent* Input = Cast<UEnhancedInputComponent>(PlayerInputComponent);
-	Input->BindAction(iaLook, ETriggerEvent::Triggered, this, &ACPlayer::MovePlayer);
+	Input->BindAction(iaLook, ETriggerEvent::Triggered, this, &ACPlayer::MoveCamera);
+	Input->BindAction(iaMove, ETriggerEvent::Triggered, this, &ACPlayer::MovePlayer);
+}
+
+void ACPlayer::MoveCamera(const FInputActionInstance& Instance)
+{
+	FVector2D inputData = Instance.GetValue().Get<FVector2D>() * fMouseSens;
+	AddControllerYawInput(inputData.X);
+	AddControllerPitchInput(inputData.Y);
 }
 
 void ACPlayer::MovePlayer(const FInputActionInstance& Instance)
 {
-	GEngine->AddOnScreenDebugMessage(-1, fDebugMessageLifetime, FColor::Red, "Input action triggered ");
+	FVector2D inputData = Instance.GetValue().Get<FVector2D>();
+
+	const FRotator rotation = Controller->GetControlRotation();
+	const FRotator yawRotation = FRotator(0, rotation.Yaw, 0);
+
+	const FVector forward = FRotationMatrix(yawRotation).GetUnitAxis(EAxis::X);
+	const FVector right = FRotationMatrix(yawRotation).GetUnitAxis(EAxis::Y);
+
+	AddMovementInput(right, inputData.X);
+	AddMovementInput(forward, inputData.Y);
 }
