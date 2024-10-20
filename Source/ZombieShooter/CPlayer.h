@@ -1,4 +1,7 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// CPlayer - Player controller with basic input functionality
+// Responsible for moving player
+//
+// Author: KeyboardDestroyer
 
 #pragma once
 
@@ -7,6 +10,10 @@
 #include "InputAction.h"
 #include "InputMappingContext.h"
 #include "CPlayer.generated.h"
+
+
+#define USE_DEBUG
+
 
 UCLASS()
 class ZOMBIESHOOTER_API ACPlayer : public ACharacter
@@ -18,6 +25,8 @@ public:
 	UInputAction* iaLook = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	UInputMappingContext* DefaultMappingContext = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	float fMouseSens = 1.0;
 	UPROPERTY(EditAnywhere, Category = "Debug")
 	float fDebugMessageLifetime = .5f;
 public:
