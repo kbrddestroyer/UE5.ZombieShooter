@@ -8,6 +8,9 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 
+#include "CPlayerAnimInstance.h"
+
+
 ACPlayer::ACPlayer()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -30,7 +33,6 @@ void ACPlayer::BeginPlay()
 void ACPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -39,6 +41,7 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	UEnhancedInputComponent* Input = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 	Input->BindAction(iaLook, ETriggerEvent::Triggered, this, &ACPlayer::MoveCamera);
 	Input->BindAction(iaMove, ETriggerEvent::Triggered, this, &ACPlayer::MovePlayer);
+	Input->BindAction(iaSight, ETriggerEvent::Triggered, this, &ACPlayer::Ironsight);
 }
 
 void ACPlayer::MoveCamera(const FInputActionInstance& Instance)
@@ -60,4 +63,33 @@ void ACPlayer::MovePlayer(const FInputActionInstance& Instance)
 
 	AddMovementInput(right, inputData.X);
 	AddMovementInput(forward, inputData.Y);
+
+
+	USkeletalMeshComponent* mesh = FindComponentByClass<USkeletalMeshComponent>();
+
+	if (!mesh)
+		return;
+
+	UCPlayerAnimInstance* animation = Cast<UCPlayerAnimInstance>(mesh->GetAnimInstance());
+
+	if (!animation)
+		return;
+
+	animation->playerSpeed = inputData;
+}
+
+void ACPlayer::Ironsight(const FInputActionInstance& Instance)
+{
+	USkeletalMeshComponent* mesh = FindComponentByClass<USkeletalMeshComponent>();
+
+	if (!mesh)
+		return;
+
+	UCPlayerAnimInstance* animation = Cast<UCPlayerAnimInstance>(mesh->GetAnimInstance());
+
+	if (!animation)
+		return;
+
+	animation->bIronsight = true;
+	
 }

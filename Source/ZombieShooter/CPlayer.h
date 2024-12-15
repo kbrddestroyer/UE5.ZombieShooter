@@ -28,6 +28,9 @@ public:
 	UInputAction* iaMove = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UInputAction* iaSight = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	UInputMappingContext* DefaultMappingContext = nullptr;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
@@ -50,6 +53,8 @@ public:
 	UFUNCTION()
 	void MovePlayer(const FInputActionInstance& Instance);
 
+	UFUNCTION()
+	void Ironsight(const FInputActionInstance& Instance);
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
