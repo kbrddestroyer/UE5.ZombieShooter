@@ -9,18 +9,18 @@
 #include "GameFramework/Character.h"
 #include "InputAction.h"
 #include "InputMappingContext.h"
+
 #include "CPlayer.generated.h"
 
 
 #define USE_DEBUG
 
-
 UCLASS()
 class ZOMBIESHOOTER_API ACPlayer : public ACharacter
 {
 	GENERATED_BODY()
-
 public:
+#pragma region INPUT_ACTIONS
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	UInputAction* iaLook = nullptr;
 
@@ -32,12 +32,16 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	UInputMappingContext* DefaultMappingContext = nullptr;
-	
+#pragma endregion
+
+#pragma region ADJUSTMENTS
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	float fMouseSens = 1.0;
 
 	UPROPERTY(EditAnywhere, Category = "Debug")
 	float fDebugMessageLifetime = .5f;
+#pragma endregion
+
 public:
 	// Sets default values for this character's properties
 	ACPlayer();
@@ -46,6 +50,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	FVector getAimPoint() const;
 public:
 	UFUNCTION()
 	void MoveCamera(const FInputActionInstance& Instance);

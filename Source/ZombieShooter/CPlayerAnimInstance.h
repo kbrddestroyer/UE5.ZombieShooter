@@ -14,6 +14,9 @@ class ZOMBIESHOOTER_API UCPlayerAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
 public:
+	UPROPERTY(BlueprintReadWrite)
+	FVector ik_lookTarget;
+
 	UPROPERTY(BlueprintReadOnly)
 	FVector2D playerSpeed;
 
