@@ -31,6 +31,9 @@ public:
 	UInputAction* iaSight = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UInputAction* iaShoot = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	UInputMappingContext* DefaultMappingContext = nullptr;
 #pragma endregion
 
@@ -41,6 +44,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Debug")
 	float fDebugMessageLifetime = .5f;
 #pragma endregion
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	USkeletalMeshComponent* weapon;
 
 public:
 	// Sets default values for this character's properties
@@ -60,6 +66,9 @@ public:
 
 	UFUNCTION()
 	void Ironsight(const FInputActionInstance& Instance);
+
+	UFUNCTION()
+	void Shoot(const FInputActionInstance& Instance);
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

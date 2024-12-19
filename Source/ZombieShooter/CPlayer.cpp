@@ -8,6 +8,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "CPlayerAnimInstance.h"
+#include "WeaponAnimInstance.h"
 
 
 ACPlayer::ACPlayer()
@@ -61,6 +62,7 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	Input->BindAction(iaLook, ETriggerEvent::Triggered, this, &ACPlayer::MoveCamera);
 	Input->BindAction(iaMove, ETriggerEvent::Triggered, this, &ACPlayer::MovePlayer);
 	Input->BindAction(iaSight, ETriggerEvent::Triggered, this, &ACPlayer::Ironsight);
+	Input->BindAction(iaShoot, ETriggerEvent::Triggered, this, &ACPlayer::Shoot);
 }
 
 void ACPlayer::MoveCamera(const FInputActionInstance& Instance)
@@ -121,4 +123,18 @@ void ACPlayer::Ironsight(const FInputActionInstance& Instance)
 		return;
 
 	animation->bIronsight = true;
+}
+
+void ACPlayer::Shoot(const FInputActionInstance& Instance)
+{
+	UE_LOG(LogTemp, Warning, TEXT("invoke shooting"));
+
+	if (!weapon)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Cannot invoke shooting"));
+		return;
+	}
+
+	UWeaponAnimInstance* weaponAnim = Cast<UWeaponAnimInstance>(weapon->GetAnimInstance());
+	weaponAnim->shoot = Instance.GetValue().Get<bool>();
 }
