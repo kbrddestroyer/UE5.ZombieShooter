@@ -11,6 +11,14 @@
 #include "WeaponAnimInstance.h"
 
 
+#define PLAYER_ANIM(default_animator) Cast<UCPlayerAnimInstance>(default_animator)
+
+
+bool ACPlayer::isValidToAnimate()
+{
+	return (playerMesh && playerAnimInstance);
+}
+
 ACPlayer::ACPlayer()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -27,17 +35,17 @@ void ACPlayer::BeginPlay()
 		}
 	}
 
-	USkeletalMeshComponent* mesh = GetComponentByClass<USkeletalMeshComponent>();
+	playerMesh = GetComponentByClass<USkeletalMeshComponent>();
 
-	if (!mesh)
+	if (!playerMesh)
 		return;
 
-	UCPlayerAnimInstance* animation = Cast<UCPlayerAnimInstance>(mesh->GetAnimInstance());
+	playerAnimInstance = playerMesh->GetAnimInstance();
 
-	if (!animation)
+	if (!playerAnimInstance)
 		return;
 
-	animation->ik_lookTarget = getAimPoint();
+	Cast<UCPlayerAnimInstance>(playerAnimInstance)->ik_lookTarget = getAimPoint();
 }
 
 FVector ACPlayer::getAimPoint() const
@@ -73,15 +81,8 @@ void ACPlayer::MoveCamera(const FInputActionInstance& Instance)
 	AddControllerPitchInput(inputData.Y);
 	USkeletalMeshComponent* mesh = GetComponentByClass<USkeletalMeshComponent>();
 
-	if (!mesh)
-		return;
-
-	UCPlayerAnimInstance* animation = Cast<UCPlayerAnimInstance>(mesh->GetAnimInstance());
-
-	if (!animation)
-		return;
-
-	animation->ik_lookTarget = getAimPoint();
+	if (isValidToAnimate())
+		PLAYER_ANIM(playerAnimInstance)->ik_lookTarget = getAimPoint();
 }
 
 void ACPlayer::MovePlayer(const FInputActionInstance& Instance)
@@ -96,33 +97,18 @@ void ACPlayer::MovePlayer(const FInputActionInstance& Instance)
 
 	AddMovementInput(right, inputData.X);
 	AddMovementInput(forward, inputData.Y);
-	USkeletalMeshComponent* mesh = GetComponentByClass<USkeletalMeshComponent>();
-
-	if (!mesh)
-		return;
-
-	UCPlayerAnimInstance* animation = Cast<UCPlayerAnimInstance>(mesh->GetAnimInstance());
-
-	if (!animation)
-		return;
-
-	animation->ik_lookTarget = getAimPoint();
-	animation->playerSpeed = inputData;
+	
+	if (isValidToAnimate())
+	{
+		PLAYER_ANIM(playerAnimInstance)->ik_lookTarget = getAimPoint();
+		PLAYER_ANIM(playerAnimInstance)->playerSpeed = inputData;
+	}
 }
 
 void ACPlayer::Ironsight(const FInputActionInstance& Instance)
 {
-	USkeletalMeshComponent* mesh = GetComponentByClass<USkeletalMeshComponent>();
-
-	if (!mesh)
-		return;
-
-	UCPlayerAnimInstance* animation = Cast<UCPlayerAnimInstance>(mesh->GetAnimInstance());
-
-	if (!animation)
-		return;
-
-	animation->bIronsight = true;
+	if (isValidToAnimate())
+		PLAYER_ANIM(playerAnimInstance)->bIronsight = Instance.GetValue().Get<bool>();
 }
 
 void ACPlayer::Shoot(const FInputActionInstance& Instance)

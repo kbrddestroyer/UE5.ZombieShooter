@@ -48,6 +48,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	USkeletalMeshComponent* weapon;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USkeletalMeshComponent* playerMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAnimInstance* playerAnimInstance;
+
+	bool isValidToAnimate();
 public:
 	// Sets default values for this character's properties
 	ACPlayer();
